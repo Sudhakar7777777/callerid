@@ -52,8 +52,7 @@ GET http://localhost:9090/query?number=(423)961-1337
 
 **Response:**
 
-    {"results":[{"number":"+14239611337","context":"blah","name":"Mckelvey Bunker"}]}
-
+    {"results":[{"name":"Mckelvey Bunker","number":"+14239611337","context":"blah"}]}
 
 
 Response Code | Description
@@ -62,6 +61,11 @@ Response Code | Description
  *400*        | Error, Bad Request.  Either invalid request parameters or invalid phone number format.
  *404*        | Error, phone number not found.
 
+Additional Sample Data for testing all use cases
+
+    curl -H 'Content-Type: application/json; charset=utf-8' http://localhost:9090/query?numbers="(423)961-1337"
+    curl -H 'Content-Type: application/json; charset=utf-8' http://localhost:9090/query?number="ALPHA"
+    curl -H 'Content-Type: application/json; charset=utf-8' http://localhost:9090/query?number="1-(423)961-2222"
 
 ### POST /number
 
@@ -84,7 +88,7 @@ The POST body is in JSON string format, to be consistent.
 
 **Response:**
 
-    {"number":"+14121231234","context":"Testing","name":"Sudhakar"}
+    {"name":"Sudhakar","number":"+14121231234","context":"Testing"}
     
 
 Response Code | Description
@@ -92,6 +96,14 @@ Response Code | Description
 *200*         | Success: The caller Id data was saved in server.
 *400*         | Error, Bad Request.  Either invalid request parameters or invalid phone number format. 
 *406*         | Not Acceptable: A record with the combination of phone number and context already exists.
+
+Additional Sample Data for testing all use cases
+
+    #Run any command twice
+    curl -H "Content-Type: application/json" -d '{"number": "(412)1231234","context": "Testing","name": "Sudhakar"}' http://localhost:9090/number
+    curl -H "Content-Type: application/json" -d '{"number": "(412)1231234","context": "Testing","name": "Sudhakar"}' http://localhost:9090/number
+    
+    curl -H "Content-Type: application/json" -d '{"number": "(412)1231234","name": "Sudhakar"}' http://localhost:9090/number
 
 ## Startup Seed Data
 
@@ -125,11 +137,11 @@ There are 2 options to run the application.
 
         ./start_app.sh
 
-The command will kick of Gradle build, executes all Unit Test and Integration Tests and then runs the Spring Boot application using JVM.  Additionally you can override the Port by changing the parameter value directly in this script.
-
-*System Requirements:*
-- Gradle version 4.5 or later
-- JVM version 8 or later
+    The command will kick of Gradle build, executes all Unit Test and Integration Tests and then runs the Spring Boot application using JVM.  Additionally you can override the Port by changing the parameter value directly in this script.
+    
+    *System Requirements:*
+    - Gradle version 4.5 or later
+    - JVM version 8 or later
 
 
 2. To start the application using the pre-existing jar file, run this command.
@@ -140,9 +152,10 @@ The command executes the Jar directly from stored folder - LatestBuild.
 
 ## Running the Tests
 
-As quoted about, if you run the application with gradle
-...
-...
+As quoted about, if you run the application with option#1, gradle will build and execute the test case.
+Alternatively, run this command to run test only with detailed debug statements.
+
+       ./test_app.sh
 
 Unit test are written only for Controller classes for Simplicity.  With Coverage: 80% Classes, 70% Methods, 52% Line.
 It can be increased further by writing new tests for Service & model java classes.

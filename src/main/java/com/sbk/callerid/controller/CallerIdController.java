@@ -20,7 +20,7 @@ public class CallerIdController
     @Autowired
     public ICallerIdService idStore;
 
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    @RequestMapping(value = "/query", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> queryCallerId(@RequestParam(value="number") String number)
     {
@@ -28,7 +28,8 @@ public class CallerIdController
         if(searchNumber.equals(PhoneNumberHelper.INVALID_INPUT))
         {
             System.err.println("Search Number " + number + " is not a valid format.");
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            String errorMsg = "{\"status\":400,\"error\":\"Bad Request\",\"message\":\"Invalid 'number' format\",\"path\":\"/query\"}";
+            return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
         }
         if(idStore.contains(searchNumber))
         {
@@ -40,11 +41,12 @@ public class CallerIdController
         else
         {
             System.err.println("Search Number " + searchNumber + " is not found.");
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            String errorMsg = "{\"status\":404,\"error\":\"Not Found\",\"message\":\"Phone number in not found on the Server\",\"path\":\"/query\"}";
+            return new ResponseEntity<>(errorMsg, HttpStatus.NOT_FOUND);
         }
     }
 
-    @RequestMapping(value = "/number", method = RequestMethod.POST)
+    @RequestMapping(value = "/number", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> createCallerId(@RequestBody final @Valid CallerId newRecord)
     {
         //reformat phone number to E.164 format and check its validity
@@ -52,7 +54,8 @@ public class CallerIdController
         if(newRecord.getNumber().equals(PhoneNumberHelper.INVALID_INPUT))
         {
             System.err.println("Search Number " + newRecord.getNumber() + " is not a valid format.");
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            String errorMsg = "{\"status\":400,\"error\":\"Bad Request\",\"message\":\"Invalid 'number' format\",\"path\":\"/number\"}";
+            return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
         }
 
         //store the new record
@@ -67,7 +70,8 @@ public class CallerIdController
         else
         {
             System.err.println("CallerID record " + newRecord + " already exists.");
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+            String errorMsg = "{\"status\":406,\"error\":\"Not Acceptable\",\"message\":\"Phone number with the given context already exists.\",\"path\":\"/query\"}";
+            return new ResponseEntity<>(errorMsg, HttpStatus.NOT_ACCEPTABLE);
         }
     }
 }
