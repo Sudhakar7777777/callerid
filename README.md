@@ -134,11 +134,11 @@ End of the day, for this solution, I like the Automatic sorting feature and cons
 1. Download the Repo to your local using Git Clone
 2. Build the docker image
 
-    docker build -t callerid .
+       docker build -t callerid .
 
 3. Run the docker container
 
-    docker run -p 9090:8080 callerid
+        docker run -p 9090:8080 callerid
     
 4. Run the tests using your browser or Curl command.  See example above for each end points.
 
