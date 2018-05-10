@@ -129,7 +129,20 @@ Benefits for this option would be...
 
 End of the day, for this solution, I like the Automatic sorting feature and consistent performance for read/write operations.
 
-## Running the application
+## Running the application using Docker
+
+1. Download the Repo to your local using Git Clone
+2. Build the docker image
+
+    docker build -t callerid .
+
+3. Run the docker container
+
+    docker run -p 9090:8080 callerid
+    
+4. Run the tests using your browser or Curl command.  See example above for each end points.
+
+## Running the application manually
 
 There are 2 options to run the application.
 
