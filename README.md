@@ -140,7 +140,13 @@ End of the day, for this solution, I like the Automatic sorting feature and cons
 
         docker run -p 9090:8080 callerid
     
-4. Run the tests using your browser or Curl command.  See example above for each end points.
+4. Run the tests using your browser or Curl command as shown above.  
+
+5. Details of API is available here (html or json format):
+
+        http://localhost:9090/swagger-ui.html
+
+        http://localhost:9090/v2/api-docs
 
 ## Running the application manually
 
