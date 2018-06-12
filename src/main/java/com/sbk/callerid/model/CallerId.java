@@ -1,7 +1,10 @@
 package com.sbk.callerid.model;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.validation.constraints.NotNull;
 
+@ApiModel(value="CallerId", description="CallerId model")
 public class CallerId
 {
     @NotNull

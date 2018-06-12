@@ -35,6 +35,7 @@ dependencies {
 //Swagger
     compile('io.springfox:springfox-swagger2:2.8.0')
     compile('io.springfox:springfox-swagger-ui:2.8.0')
+    compile('javax.xml.bind:jaxb-api:2.3.0')    //issue with swagger2.8 & Java9.  Alternative, upgrade to Swagger2.9.0.
 
 //Test
     testCompile('org.springframework.boot:spring-boot-starter-test')

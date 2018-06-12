@@ -3,6 +3,10 @@ package com.sbk.callerid.controller;
 import com.sbk.callerid.service.ICallerIdService;
 import com.sbk.callerid.service.PhoneNumberHelper;
 import com.sbk.callerid.model.CallerId;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +26,14 @@ public class CallerIdController
 
     @RequestMapping(value = "/query", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> queryCallerId(@RequestParam(value="number") String number)
+    @ApiOperation(value = "Fetches caller id information for the requested phone number.", notes = "Example: GET http://localhost:9090/query?number=(423)961-1337")
+    //@ResponseStatus(value = HttpStatus.OK)  //Default response code is 200 for all controllers.  No need to do this.
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success.  CallerId record found."),
+            @ApiResponse(code = 400, message = "Bad Request.  Invalid input phone number format."),
+            @ApiResponse(code = 404, message = "Not Found.  Phone number is not found on the Server.")
+    })
+    public ResponseEntity<?> queryCallerId(@ApiParam(value = "Number with E.164 format like +1-400-300-2000", required = true) @RequestParam(value="number") String number)
     {
         String searchNumber = PhoneNumberHelper.convertPhoneNumber(number);
         if(searchNumber.equals(PhoneNumberHelper.INVALID_INPUT))
@@ -41,13 +52,20 @@ public class CallerIdController
         else
         {
             System.err.println("Search Number " + searchNumber + " is not found.");
-            String errorMsg = "{\"status\":404,\"error\":\"Not Found\",\"message\":\"Phone number in not found on the Server\",\"path\":\"/query\"}";
+            String errorMsg = "{\"status\":404,\"error\":\"Not Found\",\"message\":\"Phone number is not found on the Server\",\"path\":\"/query\"}";
             return new ResponseEntity<>(errorMsg, HttpStatus.NOT_FOUND);
         }
     }
 
-    @RequestMapping(value = "/number", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> createCallerId(@RequestBody final @Valid CallerId newRecord)
+    @RequestMapping(value = "/number", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    @ApiOperation(value ="Adds a new caller Id record to the service.") //Adding param "code=201" changes the default return code of 200.  Alternative to @ResponseStatus annotation.
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Created. New CallerId record saved successfully."),
+            @ApiResponse(code = 400, message = "Bad Request.  Invalid input phone number format."),
+            @ApiResponse(code = 406, message = "Duplicated Record.  Caller Id for given context already exists.")
+    })
+    public ResponseEntity<?> createCallerId(@RequestBody final @Valid @ApiParam(value = "CallerId object, new Record to be created.", required = true) CallerId newRecord)
     {
         //reformat phone number to E.164 format and check its validity
         newRecord.setNumber(PhoneNumberHelper.convertPhoneNumber(newRecord.getNumber()));
